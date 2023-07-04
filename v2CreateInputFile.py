@@ -257,7 +257,7 @@ if selection1 == 'RMS':
         # -- DOWNLOAD SECTION
         st.subheader('Downloads:')
         with st.spinner('Wait for it...'):
-                generate_template_RMS('streamlit_cat_input/v7Template.xlsx')
+                generate_template_RMS('v7Template.xlsx')
                 st.success('Done!')
             
     if selection2_option_1 and not selection2_option_2:  # Only EQ selected
