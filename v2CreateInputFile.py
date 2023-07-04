@@ -4,7 +4,7 @@ import numpy as np
 import plotly.express as px
 import base64
 from io import StringIO, BytesIO
-import openpyxl
+from openpyxl import load_workbook
 
 st.set_page_config(page_title="Create input file", page_icon=":egg:", layout="wide")
 
