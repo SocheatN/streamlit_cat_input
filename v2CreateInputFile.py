@@ -1,12 +1,9 @@
 import streamlit as st
-from st_aggrid import AgGrid
 import pandas as pd
 import numpy as np
 import plotly.express as px
 import base64
 from io import StringIO, BytesIO
-import time
-from openpyxl import load_workbook
 
 st.set_page_config(page_title="Create input file", page_icon=":egg:", layout="wide")
 
