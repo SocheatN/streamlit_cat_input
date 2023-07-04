@@ -223,7 +223,7 @@ def generate_template_AIR_TC(excel_template):
 
 
 
-local_css("style.css")
+#local_css("style.css")
 
 # ---- HEADER SECTION ----
 with st.container():
