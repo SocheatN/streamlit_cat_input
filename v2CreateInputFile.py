@@ -50,8 +50,7 @@ def loc_file_AIR(Exp,peril,df_Occ,df_Cons,df_BH, currency):
     df = df.loc[:,~df.columns.duplicated()].copy()
     loc_file=df.drop(columns = ['BuildingValue','ContentsValue','Occupancy','Occ_split','Cons_split','BH_split','YB_split'])
     return loc_file
-
-# Use local CSS
+    
 def local_css(file_name):
     with open(file_name) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
