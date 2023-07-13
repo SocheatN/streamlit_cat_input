@@ -19,14 +19,7 @@ def generate_excel_download_link(df, file_name):
     href = f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="data_download.xlsx">Download '+file_name+' </a>'
     return st.markdown(href, unsafe_allow_html=True)
 
-def generate_html_download_link(fig):
-    towrite = StringIO()
-    fig.write_html(towrite, include_plotlyjs="cdn")
-    towrite = BytesIO(towrite.getvalue().encode())
-    b64 = base64.b64encode(towrite.read()).decode()
-    href = f'<a href="data:text/html;charset=utf-8;base64, {b64}" download="plot.html">Download Plot</a>'
-    return st.markdown(href, unsafe_allow_html=True)
-
+@st.cache_data
 def loc_file_RMS(Exp,peril,df_Occ,df_Cons,df_BH, currency):
     df=Exp.merge(df_Occ,on='LOBNAME').merge(df_Cons,on='LOBNAME').merge(df_BH,on='LOBNAME').merge(df_YB,on='LOBNAME') 
     df['EQCV1VAL'],df['EQCV2VAL'],df['EQCV3VAL'],df['EQSITELIM'], df['WSCV1VAL'],df['WSCV2VAL'],df['WSCV3VAL'],df['WSSITELIM']=0,0,0,0,0,0,0,0
@@ -41,7 +34,8 @@ def loc_file_RMS(Exp,peril,df_Occ,df_Cons,df_BH, currency):
     
     loc_file=df.drop(columns = ['BLDG','CONT','BI','TIV','SITELIM','Occupancy','Occ_split','Construction','Cons_split','BH','BH_split','YB','YB_split'])
     return loc_file
-
+    
+@st.cache_data
 def loc_file_AIR(Exp,peril,df_Occ,df_Cons,df_BH, currency):
     df=Exp.merge(df_Occ,on='ContractID').merge(df_Cons,on='ContractID').merge(df_BH,on='ContractID').merge(df_YB,on='ContractID') 
     df['EQCV1VAL'],df['EQCV2VAL'],df['EQSITELIM'], df['WSCV1VAL'],df['WSCV2VAL'],df['WSSITELIM']=0,0,0,0,0,0
@@ -97,37 +91,7 @@ if uploaded_file:
     df_Cons = pd.read_excel(uploaded_file,sheet_name='Cons')
     df_BH = pd.read_excel(uploaded_file,sheet_name='BH')
     df_YB = pd.read_excel(uploaded_file,sheet_name='YB')
-    
-    # Exp1_column, Exp2_column, Exp3_column = st.columns(3)
-    
-    # with Exp1_column:
-    #     st.header("Account")
-    #     st.dataframe(df_Account)
-    
-    # with Exp2_column:
-    #     st.header("EQ Exposure")
-    #     st.dataframe(df_EQ)
-  
-    # with Exp3_column:
-    #     st.header("TC Exposure") 
-    #     st.dataframe(df_TC)
-  
-    # Assmption1_column, Assmption2_column, Assmption3_column = st.columns(3)
-  
-    # with Assmption1_column:
-    #     st.header("Occupancy split")  
-    #     st.dataframe(df_Occ)
-    
-    # with Assmption2_column:
-    #     st.header("Construction split")
-    #     st.dataframe(df_Cons)
-        
-    # with Assmption3_column:
-    #     st.header("Building height split")
-    #     st.dataframe(df_BH)
-        
-    
-        
+
     # -- GROUP DATAFRAME
     
     if selection1 == 'RMS':
@@ -215,27 +179,7 @@ if uploaded_file:
             title=f'<b>Split by Year Built</b>',
             text = df_YB['YB_split'].apply(lambda x: '{0:1.2f}%'.format(x*100))
         )
-        
-            
-        #Plot1, Plot2 = st.columns(2)
-        #with Plot1:
-            #st.plotly_chart(fig1)
-            
-        #with Plot2:
-            #st.plotly_chart(fig2)
-            
-        #Plot3, Plot4, Plot5, Plot6 = st.columns(4)
-        #with Plot3:
-            #st.plotly_chart(fig3)
-        #with Plot4:
-            #st.plotly_chart(fig4)
-        #with Plot5:
-            #st.plotly_chart(fig5)
-        #with Plot6:
-            #st.plotly_chart(fig6)
-       
-    
-        
+   
         if currency == 'Other Currency':
             cur = currency_otherOption
         else:
@@ -284,8 +228,6 @@ if uploaded_file:
                 with st.spinner('Wait for it...'):
                     generate_excel_download_link(edited_df_Account,'RMS input file: Account')
                     generate_excel_download_link(edited_df_Location,'RMS input file: Location')
-                    #generate_html_download_link(fig1)
-                    #generate_html_download_link(fig2)
                     st.success('Done!')
                     
         if selection2_option_1 and not selection2_option_2:  # Only EQ selected
@@ -325,8 +267,6 @@ if uploaded_file:
                 with st.spinner('Wait for it...'):
                     generate_excel_download_link(edited_df_Account,'RMS input file: Account')
                     generate_excel_download_link(edited_df_Location,'RMS input file: Location')
-                    #generate_html_download_link(fig1)
-                    #generate_html_download_link(fig2)
                     st.success('Done!')
                     
         if selection2_option_2 and not selection2_option_1:  # Only TC selected
@@ -364,8 +304,6 @@ if uploaded_file:
                 with st.spinner('Wait for it...'):
                     generate_excel_download_link(edited_df_Account,'RMS input file: Account')
                     generate_excel_download_link(edited_df_Location,'RMS input file: Location')
-                    #generate_html_download_link(fig1)
-                    #generate_html_download_link(fig2)
                     st.success('Done!')
 
         
@@ -530,8 +468,6 @@ if uploaded_file:
                 with st.spinner('Wait for it...'):
                     generate_excel_download_link(edited_df_Account,'AIR input file: Account')
                     generate_excel_download_link(edited_df_Location,'AIR input file: Location')
-                    #generate_html_download_link(fig1)
-                    #generate_html_download_link(fig2)
                     st.success('Done!')
                     
         if selection2_option_1 and not selection2_option_2:  # Only EQ selected
@@ -571,8 +507,6 @@ if uploaded_file:
                 with st.spinner('Wait for it...'):
                     generate_excel_download_link(edited_df_Account,'AIR input file: Account')
                     generate_excel_download_link(edited_df_Location,'AIR input file: Location')
-                    #generate_html_download_link(fig1)
-                    #generate_html_download_link(fig2)
                     st.success('Done!')
                     
         if selection2_option_2 and not selection2_option_1:  # Only TC selected
@@ -612,6 +546,4 @@ if uploaded_file:
                 with st.spinner('Wait for it...'):
                     generate_excel_download_link(edited_df_Account,'AIR input file: Account')
                     generate_excel_download_link(edited_df_Location,'AIR input file: Location')
-                    #generate_html_download_link(fig1)
-                    #generate_html_download_link(fig2)
                     st.success('Done!')
