@@ -247,15 +247,6 @@ selection2 = st.write('Peril : ')
 selection2_option_1 = st.checkbox('EQ')
 selection2_option_2 = st.checkbox('TC')
 
-# Third Selection : Currency ?
-
-list_currency = sorted(['AUD', 'CNY', 'IDR', 'INR', 'JPY', 'NZD', 'PHP', 'TWD', 'USD', 'EUR', 'KRW', 'HKD'])
-list_currency.append('Other Currency')
-currency = st.selectbox("Select currency", options=list_currency)
-
-if currency == "Other Currency": 
-    currency_otherOption = st.text_input("Other Currency: ")
-
 # --- TEMPLATE SECTION -----
 if selection1 == 'RMS':
     if selection2_option_1 and selection2_option_2:   # EQ and TC selected
