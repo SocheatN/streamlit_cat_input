@@ -11,7 +11,7 @@ st.set_page_config(page_title="Visualization", page_icon=":egg:", layout="wide")
 #st.markdown("# CAT Data Visualization")
 
 # ---- DEF ----
-@st.cache_data
+@st.cache_data(show_spinner=False)
 def convert_into_csv(df):
     return df.to_csv(index = False).encode('utf-8')
 
@@ -22,7 +22,7 @@ def generate_download_button(csv_data, file_label):
                            mime='text/csv')
 
 
-@st.cache_data
+@st.cache_data(show_spinner=False)
 def loc_file_RMS(Exp,peril,df_Occ,df_Cons,df_BH, currency):
     df=Exp.merge(df_Occ,on='LOBNAME').merge(df_Cons,on='LOBNAME').merge(df_BH,on='LOBNAME').merge(df_YB,on='LOBNAME') 
     df['EQCV1VAL'],df['EQCV2VAL'],df['EQCV3VAL'],df['EQSITELIM'], df['WSCV1VAL'],df['WSCV2VAL'],df['WSCV3VAL'],df['WSSITELIM']=0,0,0,0,0,0,0,0
@@ -37,7 +37,7 @@ def loc_file_RMS(Exp,peril,df_Occ,df_Cons,df_BH, currency):
     
     loc_file=df.drop(columns = ['BLDG','CONT','BI','TIV','SITELIM','Occupancy','Occ_split','Construction','Cons_split','BH','BH_split','YB','YB_split'])
     return loc_file
-@st.cache_data
+@st.cache_data(show_spinner=False)
 def loc_file_AIR(Exp,peril,df_Occ,df_Cons,df_BH, currency):
     df=Exp.merge(df_Occ,on='ContractID').merge(df_Cons,on='ContractID').merge(df_BH,on='ContractID').merge(df_YB,on='ContractID') 
     df['EQCV1VAL'],df['EQCV2VAL'],df['EQSITELIM'], df['WSCV1VAL'],df['WSCV2VAL'],df['WSSITELIM']=0,0,0,0,0,0
