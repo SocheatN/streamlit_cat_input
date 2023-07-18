@@ -11,13 +11,16 @@ st.set_page_config(page_title="Visualization", page_icon=":egg:", layout="wide")
 #st.markdown("# CAT Data Visualization")
 
 # ---- DEF ----
-def generate_excel_download_link(df, file_name):
-    towrite = BytesIO()
-    df.to_excel(towrite,  index=False, header=True)  # write to BytesIO buffer
-    towrite.seek(0)  # reset pointer
-    b64 = base64.b64encode(towrite.read()).decode()
-    href = f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="data_download.xlsx">Download '+file_name+' </a>'
-    return st.markdown(href, unsafe_allow_html=True)
+@st.cache_data
+def convert_into_csv(df):
+    return df.to_csv(index = False).encode('utf-8')
+
+def generate_download_button(csv_data, file_label):
+    st.download_button(label=f"Download {file_label} as CSV",
+                           data=csv_data,
+                           file_name=f"data_{file_label}.csv",
+                           mime='text/csv')
+
 
 @st.cache_data
 def loc_file_RMS(Exp,peril,df_Occ,df_Cons,df_BH, currency):
@@ -34,7 +37,6 @@ def loc_file_RMS(Exp,peril,df_Occ,df_Cons,df_BH, currency):
     
     loc_file=df.drop(columns = ['BLDG','CONT','BI','TIV','SITELIM','Occupancy','Occ_split','Construction','Cons_split','BH','BH_split','YB','YB_split'])
     return loc_file
-    
 @st.cache_data
 def loc_file_AIR(Exp,peril,df_Occ,df_Cons,df_BH, currency):
     df=Exp.merge(df_Occ,on='ContractID').merge(df_Cons,on='ContractID').merge(df_BH,on='ContractID').merge(df_YB,on='ContractID') 
@@ -91,7 +93,8 @@ if uploaded_file:
     df_Cons = pd.read_excel(uploaded_file,sheet_name='Cons')
     df_BH = pd.read_excel(uploaded_file,sheet_name='BH')
     df_YB = pd.read_excel(uploaded_file,sheet_name='YB')
-
+               
+        
     # -- GROUP DATAFRAME
     
     if selection1 == 'RMS':
@@ -179,7 +182,8 @@ if uploaded_file:
             title=f'<b>Split by Year Built</b>',
             text = df_YB['YB_split'].apply(lambda x: '{0:1.2f}%'.format(x*100))
         )
-   
+           
+        
         if currency == 'Other Currency':
             cur = currency_otherOption
         else:
@@ -220,15 +224,14 @@ if uploaded_file:
                 st.header("RMS: Location file")
                 edited_df_Location = st.experimental_data_editor(df_Location, num_rows = 'dynamic')
             
+            csv_Account = convert_into_csv(edited_df_Account)
+            csv_Location = convert_into_csv(edited_df_Location)
+            
             # -- DOWNLOAD SECTION
-            st.write('Download the tables ?')
-            confirm_button = st.checkbox('Yes')
-            if confirm_button:                
-                st.subheader('Downloads:')
-                with st.spinner('Wait for it...'):
-                    generate_excel_download_link(edited_df_Account,'RMS input file: Account')
-                    generate_excel_download_link(edited_df_Location,'RMS input file: Location')
-                    st.success('Done!')
+            st.subheader('Downloads:')
+            generate_download_button(csv_Account, 'Account')
+            generate_download_button(csv_Location, 'Location')
+            
                     
         if selection2_option_1 and not selection2_option_2:  # Only EQ selected
 
@@ -259,16 +262,14 @@ if uploaded_file:
                 st.header("RMS: Location file")
                 edited_df_Location = st.experimental_data_editor(df_Location, num_rows = 'dynamic')
             
+            csv_Account = convert_into_csv(edited_df_Account)
+            csv_Location = convert_into_csv(edited_df_Location)
+            
             # -- DOWNLOAD SECTION
-            st.write('Download the tables ?')
-            confirm_button = st.checkbox('Yes')
-            if confirm_button:                
-                st.subheader('Downloads:')
-                with st.spinner('Wait for it...'):
-                    generate_excel_download_link(edited_df_Account,'RMS input file: Account')
-                    generate_excel_download_link(edited_df_Location,'RMS input file: Location')
-                    st.success('Done!')
-                    
+            st.subheader('Downloads:')
+            generate_download_button(csv_Account, 'Account')
+            generate_download_button(csv_Location, 'Location')
+            
         if selection2_option_2 and not selection2_option_1:  # Only TC selected
 
             # -- PLOT THE GRAPHS
@@ -296,17 +297,14 @@ if uploaded_file:
                 st.header("RMS: Location file")
                 edited_df_Location = st.experimental_data_editor(df_Location, num_rows = 'dynamic')
             
+            csv_Account = convert_into_csv(edited_df_Account)
+            csv_Location = convert_into_csv(edited_df_Location)
+            
             # -- DOWNLOAD SECTION
-            st.write('Download the tables ?')
-            confirm_button = st.checkbox('Yes')
-            if confirm_button:                
-                st.subheader('Downloads:')
-                with st.spinner('Wait for it...'):
-                    generate_excel_download_link(edited_df_Account,'RMS input file: Account')
-                    generate_excel_download_link(edited_df_Location,'RMS input file: Location')
-                    st.success('Done!')
-
-        
+            st.subheader('Downloads:')
+            generate_download_button(csv_Account, 'Account')
+            generate_download_button(csv_Location, 'Location')
+                   
         
     if selection1 == 'AIR':
         hide_dataframe_row_index = """
@@ -325,11 +323,6 @@ if uploaded_file:
         )
         output_columns = ['BuildingValue', 'ContentsValue','TimeElementValue', 'OtherValue']
         
-        
-        
-        
-        #df_grouped1 = df_EQ.groupby(by=[groupby_column], as_index=False)[output_columns].sum()
-        #df_grouped2 = df_TC.groupby(by=[groupby_column], as_index=False)[output_columns].sum()
         df_grouped1 = df_EQ.groupby(by=[groupby_column], as_index=False)[output_columns].sum()
         df_grouped2 = df_TC.groupby(by=[groupby_column], as_index=False)[output_columns].sum()
         
@@ -468,6 +461,8 @@ if uploaded_file:
                 with st.spinner('Wait for it...'):
                     generate_excel_download_link(edited_df_Account,'AIR input file: Account')
                     generate_excel_download_link(edited_df_Location,'AIR input file: Location')
+                    #generate_html_download_link(fig1)
+                    #generate_html_download_link(fig2)
                     st.success('Done!')
                     
         if selection2_option_1 and not selection2_option_2:  # Only EQ selected
@@ -507,6 +502,8 @@ if uploaded_file:
                 with st.spinner('Wait for it...'):
                     generate_excel_download_link(edited_df_Account,'AIR input file: Account')
                     generate_excel_download_link(edited_df_Location,'AIR input file: Location')
+                    #generate_html_download_link(fig1)
+                    #generate_html_download_link(fig2)
                     st.success('Done!')
                     
         if selection2_option_2 and not selection2_option_1:  # Only TC selected
@@ -546,4 +543,6 @@ if uploaded_file:
                 with st.spinner('Wait for it...'):
                     generate_excel_download_link(edited_df_Account,'AIR input file: Account')
                     generate_excel_download_link(edited_df_Location,'AIR input file: Location')
+                    #generate_html_download_link(fig1)
+                    #generate_html_download_link(fig2)
                     st.success('Done!')
