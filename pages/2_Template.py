@@ -12,7 +12,8 @@ st.set_page_config(page_title="Template", page_icon=":egg:", layout="wide")
 
 #st.markdown("# CAT Excel Template")
 
-# ---- DEF ----
+# ---- DEF ----   
+@st.cache_data(show_spinner=False, experimental_allow_widgets=True)
 def generate_template_RMS(excel_template):
             buffer = BytesIO()
             xls = pd.ExcelFile(excel_template)
@@ -41,7 +42,8 @@ def generate_template_RMS(excel_template):
                     label="Download Excel Template (RMS)",
                     data=buffer,
                     file_name="RMS_Template.xlsx")
-                
+
+@st.cache_data(show_spinner=False, experimental_allow_widgets=True)                
 def generate_template_RMS_EQ(excel_template):
             buffer = BytesIO()
             xls = pd.ExcelFile(excel_template)
@@ -68,7 +70,8 @@ def generate_template_RMS_EQ(excel_template):
                     label="Download Excel Template (RMS - Only EQ)",
                     data=buffer,
                     file_name="RMS_EQ_Template.xlsx")
-                
+
+@st.cache_data(show_spinner=False, experimental_allow_widgets=True)                
 def generate_template_RMS_TC(excel_template):
             buffer = BytesIO()
             xls = pd.ExcelFile(excel_template)
@@ -95,7 +98,8 @@ def generate_template_RMS_TC(excel_template):
                     label="Download Excel Template (RMS - Only TC)",
                     data=buffer,
                     file_name="RMS_TC_Template.xlsx")
-                
+
+@st.cache_data(show_spinner=False, experimental_allow_widgets=True)                
 def generate_template_AIR(excel_template):
             buffer = BytesIO()
             xls = pd.ExcelFile(excel_template)
@@ -124,7 +128,8 @@ def generate_template_AIR(excel_template):
                     label="Download Excel Template (AIR)",
                     data=buffer,
                     file_name="AIR_Template.xlsx")
-                
+
+@st.cache_data(show_spinner=False, experimental_allow_widgets=True)                
 def generate_template_AIR_EQ(excel_template):
             buffer = BytesIO()
             xls = pd.ExcelFile(excel_template)
@@ -151,7 +156,8 @@ def generate_template_AIR_EQ(excel_template):
                     label="Download Excel Template (AIR - Only EQ)",
                     data=buffer,
                     file_name="AIR_EQ_Template.xlsx")
-                
+
+@st.cache_data(show_spinner=False, experimental_allow_widgets=True)                
 def generate_template_AIR_TC(excel_template):
             buffer = BytesIO()
             xls = pd.ExcelFile(excel_template)
@@ -179,12 +185,13 @@ def generate_template_AIR_TC(excel_template):
                     data=buffer,
                     file_name="AIR_TC_Template.xlsx")
 
+
+
 # Use local CSS
 def local_css(file_name):
     with open(file_name) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
         
-
 
 
 local_css("style.css")
@@ -212,7 +219,7 @@ if selection1 == 'RMS':
         # -- DOWNLOAD SECTION
         st.subheader('Downloads:')
         with st.spinner('Wait for it...'):
-                generate_template_RMS('v7Template.xlsx')
+                generate_template_RMS('Template.xlsx')
                 st.success('Done!')
             
     if selection2_option_1 and not selection2_option_2:  # Only EQ selected
@@ -220,7 +227,7 @@ if selection1 == 'RMS':
         # -- DOWNLOAD SECTION
         st.subheader('Downloads:')
         with st.spinner('Wait for it...'):
-                generate_template_RMS_EQ('v7Template.xlsx')
+                generate_template_RMS_EQ('Template.xlsx')
                 st.success('Done!')
                 
     if selection2_option_2 and not selection2_option_1:  # Only TC selected
@@ -228,7 +235,7 @@ if selection1 == 'RMS':
         # -- DOWNLOAD SECTION
         st.subheader('Downloads:')
         with st.spinner('Wait for it...'):
-                generate_template_RMS_TC('v7Template.xlsx')
+                generate_template_RMS_TC('Template.xlsx')
                 st.success('Done!')
 
 if selection1 == 'AIR':
@@ -237,7 +244,7 @@ if selection1 == 'AIR':
         # -- DOWNLOAD SECTION
         st.subheader('Downloads:')
         with st.spinner('Wait for it...'):
-                generate_template_AIR('v7Template.xlsx')
+                generate_template_AIR('Template.xlsx')
                 st.success('Done!')
             
     if selection2_option_1 and not selection2_option_2: # Only EQ selected
@@ -245,7 +252,7 @@ if selection1 == 'AIR':
         # -- DOWNLOAD SECTION
         st.subheader('Downloads:')
         with st.spinner('Wait for it...'):
-                generate_template_AIR_EQ('v7Template.xlsx')
+                generate_template_AIR_EQ('Template.xlsx')
                 st.success('Done!')
                 
     if selection2_option_2 and not selection2_option_1: # Only TC selected
@@ -253,5 +260,5 @@ if selection1 == 'AIR':
         # -- DOWNLOAD SECTION
         st.subheader('Downloads:')
         with st.spinner('Wait for it...'):
-                generate_template_AIR_TC('v7Template.xlsx')
+                generate_template_AIR_TC('Template.xlsx')
                 st.success('Done!')                
