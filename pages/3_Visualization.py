@@ -5,6 +5,9 @@ import numpy as np
 import plotly.express as px
 import base64
 from io import StringIO, BytesIO
+import io
+import zipfile
+
 
 st.set_page_config(page_title="Visualization", page_icon=":egg:", layout="wide")
 
@@ -229,8 +232,14 @@ if uploaded_file:
             
             # -- DOWNLOAD SECTION
             st.subheader('Downloads:')
-            generate_download_button(csv_Account, 'Account')
-            generate_download_button(csv_Location, 'Location')
+            #generate_download_button(csv_Account, 'Account')
+            #generate_download_button(csv_Location, 'Location')
+            
+            if st.button('Download the RMS Tables as CSV'):
+                with st.spinner("Operation in progress. Please wait..."):
+                    edited_df_Account.to_csv('data_Account.csv', index = False)
+                    edited_df_Location.to_csv('data_Location.csv', index = False)
+                st.success('Done!')
             
                     
         if selection2_option_1 and not selection2_option_2:  # Only EQ selected
@@ -267,8 +276,13 @@ if uploaded_file:
             
             # -- DOWNLOAD SECTION
             st.subheader('Downloads:')
-            generate_download_button(csv_Account, 'Account')
-            generate_download_button(csv_Location, 'Location')
+            #generate_download_button(csv_Account, 'Account')
+            #generate_download_button(csv_Location, 'Location')
+            
+            st.download_button(label="Download files as CSV",
+                                   data=[csv_Account, csv_Location],
+                                   file_name=['data_Account.csv', 'data_Location.csv'],
+                                   mime='text/csv')
             
         if selection2_option_2 and not selection2_option_1:  # Only TC selected
 
@@ -302,8 +316,21 @@ if uploaded_file:
             
             # -- DOWNLOAD SECTION
             st.subheader('Downloads:')
-            generate_download_button(csv_Account, 'Account')
-            generate_download_button(csv_Location, 'Location')
+            #generate_download_button(csv_Account, 'Account')
+            #generate_download_button(csv_Location, 'Location')
+
+            buf = io.BytesIO()
+
+            with zipfile.ZipFile(buf, "x") as csv_zip:
+                csv_zip.writestr("data_Account.csv", csv_Account)
+                csv_zip.writestr("data_Location.csv", csv_Location)
+            
+            st.download_button(
+                label="Download ZIP File (Account + Location)",
+                data=buf.getvalue(),
+                file_name="RMS_TC_Summary.zip",
+                mime="application/zip",
+            )
                    
         
     if selection1 == 'AIR':
