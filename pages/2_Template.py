@@ -5,6 +5,7 @@ import numpy as np
 import plotly.express as px
 import base64
 from io import StringIO, BytesIO
+from PIL import Image
 #import time
 #from openpyxl import load_workbook
 
@@ -185,7 +186,19 @@ def generate_template_AIR_TC(excel_template):
                     data=buffer,
                     file_name="AIR_TC_Template.xlsx")
 
-
+@st.cache_data(show_spinner=False, experimental_allow_widgets=True)
+def tutorial_download():
+    st.markdown('To select the destination folder for your template, make sure to have the right settings in your browser.')
+    image1, image2, image3 = st.columns(3)
+    with image1:
+        image1 = Image.open('MicrosoftEdge_Download.png')
+        st.image(image1, caption='Microsft Edge')
+    with image2:
+        image2 = Image.open('Chrome_Download.png')
+        st.image(image2, caption='Google Chrome')
+    with image3:
+        image3 = Image.open('Firefox_Download.png')
+        st.image(image3, caption='Mozilla Firefox')
 
 # Use local CSS
 def local_css(file_name):
@@ -198,7 +211,8 @@ local_css("style.css")
 
 # ---- HEADER SECTION ----
 with st.container():    
-    st.title("Cat Input File Generator")
+    st.title("Cat Input File Generator")    
+    st.markdown('IMPORTANT : Make sure to fill correctly the feature "LOBNAME" in your Template')
     st.subheader("Generate your Excel Template")
 
 # ---- SELECTION ----
@@ -218,9 +232,11 @@ if selection1 == 'RMS':
 
         # -- DOWNLOAD SECTION
         st.subheader('Downloads:')
+        
         with st.spinner('Wait for it...'):
                 generate_template_RMS('Template.xlsx')
-                st.success('Done!')
+                st.success('Done!')   
+        tutorial_download()
             
     if selection2_option_1 and not selection2_option_2:  # Only EQ selected
 
@@ -229,6 +245,7 @@ if selection1 == 'RMS':
         with st.spinner('Wait for it...'):
                 generate_template_RMS_EQ('Template.xlsx')
                 st.success('Done!')
+        tutorial_download()
                 
     if selection2_option_2 and not selection2_option_1:  # Only TC selected
 
@@ -237,6 +254,7 @@ if selection1 == 'RMS':
         with st.spinner('Wait for it...'):
                 generate_template_RMS_TC('Template.xlsx')
                 st.success('Done!')
+        tutorial_download()
 
 if selection1 == 'AIR':
     if selection2_option_1 and selection2_option_2:  # EQ and TC selected
@@ -246,6 +264,7 @@ if selection1 == 'AIR':
         with st.spinner('Wait for it...'):
                 generate_template_AIR('Template.xlsx')
                 st.success('Done!')
+        tutorial_download()
             
     if selection2_option_1 and not selection2_option_2: # Only EQ selected
 
@@ -254,6 +273,7 @@ if selection1 == 'AIR':
         with st.spinner('Wait for it...'):
                 generate_template_AIR_EQ('Template.xlsx')
                 st.success('Done!')
+        tutorial_download()
                 
     if selection2_option_2 and not selection2_option_1: # Only TC selected
 
@@ -261,4 +281,5 @@ if selection1 == 'AIR':
         st.subheader('Downloads:')
         with st.spinner('Wait for it...'):
                 generate_template_AIR_TC('Template.xlsx')
-                st.success('Done!')                
+                st.success('Done!')  
+        tutorial_download()
