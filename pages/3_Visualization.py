@@ -6,23 +6,22 @@ import plotly.express as px
 import base64
 from io import StringIO, BytesIO
 import io
-import zipfile
+from pathlib import Path
 
 
 st.set_page_config(page_title="Visualization", page_icon=":egg:", layout="wide")
 
-#st.markdown("# CAT Data Visualization")
-
 # ---- DEF ----
-@st.cache_data(show_spinner=False)
-def convert_into_csv(df):
-    return df.to_csv(index = False).encode('utf-8')
+def convert_into_csv(df, file_name):
+    downloads_path = str(Path.home()/"Downloads")
+    return df.to_csv(downloads_path+'//'+file_name+'.csv', index = False)
 
-def generate_download_button(csv_data, file_label):
-    st.download_button(label=f"Download {file_label} as CSV",
-                           data=csv_data,
-                           file_name=f"data_{file_label}.csv",
-                           mime='text/csv')
+def generate_download_button(button_label, df_Account, df_Location):
+            if st.button(button_label):
+                with st.spinner("Operation in progress. Please wait..."):
+                    convert_into_csv(df_Account, 'Account')
+                    convert_into_csv(df_Location, 'Location')
+                st.success('Done! The files have been downloaded in the folder "Downloads"')
 
 
 @st.cache_data(show_spinner=False)
@@ -53,6 +52,20 @@ def loc_file_AIR(Exp,peril,df_Occ,df_Cons,df_BH, currency):
     loc_file=df.drop(columns = ['BuildingValue','ContentsValue','Occupancy','Occ_split','Cons_split','BH_split','YB_split'])
     return loc_file
 
+def check_split(df, label):
+    df_check = df.groupby('LOBNAME').sum()
+    #df_check = df_check.round(5)
+    Check = (df_check[label] == 1).all()
+    if Check != True:
+       st.error('ERROR: Sum of ' + label + ' is not equal to 1 for each LOBNAME', icon="🚨")
+    return Check
+
+def check_TIV(df, peril):
+    check_series = df['BLDG']+df['CONT']+df['BI'] == df['TIV']
+    false_indexs = check_series[~check_series].index
+    for index in false_indexs:
+        st.warning('WARNING for tab ' + peril + ' : The sum of BLDG, CONT and BI is not equal to TIV for index ' + str(index+2), icon="⚠️")
+        
 # Use local CSS
 def local_css(file_name):
     with open(file_name) as f:
@@ -64,6 +77,7 @@ local_css("style.css")
 with st.container():    
     st.title("Cat Input File Visualization")
     st.subheader("Upload your CAT Data")
+    st.markdown('Please make sure the LOBNAME column is filled correctly.')
     
 # ---- SELECTION ----
 
@@ -96,10 +110,24 @@ if uploaded_file:
     df_Cons = pd.read_excel(uploaded_file,sheet_name='Cons')
     df_BH = pd.read_excel(uploaded_file,sheet_name='BH')
     df_YB = pd.read_excel(uploaded_file,sheet_name='YB')
-               
+    
+    # -- DATA VALIDATION : 
+    
+    check_TIV(df_EQ, 'EQ')
+    check_TIV(df_TC, 'TC')
+    
+    # - SPLIT VALIDATION
+    check_Occ = check_split(df_Occ, 'Occ_split')
+    check_Cons = check_split(df_Cons, 'Cons_split')
+    check_BH = check_split(df_BH, 'BH_split')
+    check_YB = check_split(df_YB, 'YB_split')
+    
+    # If one of the check variables is False, meaning does not respect the data validation, stop the code
+    if not (check_Occ and check_Cons and check_BH and check_YB):  
+        st.stop()
+        
         
     # -- GROUP DATAFRAME
-    
     if selection1 == 'RMS':
         groupby_column = st.selectbox(
              'What would you like to group by?',
@@ -227,21 +255,11 @@ if uploaded_file:
                 st.header("RMS: Location file")
                 edited_df_Location = st.experimental_data_editor(df_Location, num_rows = 'dynamic')
             
-            csv_Account = convert_into_csv(edited_df_Account)
-            csv_Location = convert_into_csv(edited_df_Location)
             
             # -- DOWNLOAD SECTION
             st.subheader('Downloads:')
-            #generate_download_button(csv_Account, 'Account')
-            #generate_download_button(csv_Location, 'Location')
-            
-            if st.button('Download the RMS Tables as CSV'):
-                with st.spinner("Operation in progress. Please wait..."):
-                    edited_df_Account.to_csv('data_Account.csv', index = False)
-                    edited_df_Location.to_csv('data_Location.csv', index = False)
-                st.success('Done!')
-            
-                    
+            generate_download_button('Download the RMS Tables as CSV', edited_df_Account, edited_df_Location)
+                                
         if selection2_option_1 and not selection2_option_2:  # Only EQ selected
 
             # -- PLOT THE GRAPHS
@@ -271,18 +289,10 @@ if uploaded_file:
                 st.header("RMS: Location file")
                 edited_df_Location = st.experimental_data_editor(df_Location, num_rows = 'dynamic')
             
-            csv_Account = convert_into_csv(edited_df_Account)
-            csv_Location = convert_into_csv(edited_df_Location)
             
             # -- DOWNLOAD SECTION
             st.subheader('Downloads:')
-            #generate_download_button(csv_Account, 'Account')
-            #generate_download_button(csv_Location, 'Location')
-            
-            st.download_button(label="Download files as CSV",
-                                   data=[csv_Account, csv_Location],
-                                   file_name=['data_Account.csv', 'data_Location.csv'],
-                                   mime='text/csv')
+            generate_download_button('Download the RMS tables as CSV', edited_df_Account, edited_df_Location)
             
         if selection2_option_2 and not selection2_option_1:  # Only TC selected
 
@@ -311,27 +321,9 @@ if uploaded_file:
                 st.header("RMS: Location file")
                 edited_df_Location = st.experimental_data_editor(df_Location, num_rows = 'dynamic')
             
-            csv_Account = convert_into_csv(edited_df_Account)
-            csv_Location = convert_into_csv(edited_df_Location)
-            
             # -- DOWNLOAD SECTION
             st.subheader('Downloads:')
-            #generate_download_button(csv_Account, 'Account')
-            #generate_download_button(csv_Location, 'Location')
-
-            buf = io.BytesIO()
-
-            with zipfile.ZipFile(buf, "x") as csv_zip:
-                csv_zip.writestr("data_Account.csv", csv_Account)
-                csv_zip.writestr("data_Location.csv", csv_Location)
-            
-            st.download_button(
-                label="Download ZIP File (Account + Location)",
-                data=buf.getvalue(),
-                file_name="RMS_TC_Summary.zip",
-                mime="application/zip",
-            )
-                   
+            generate_download_button('Download the RMS tables as CSV', edited_df_Account, edited_df_Location)
         
     if selection1 == 'AIR':
         hide_dataframe_row_index = """
