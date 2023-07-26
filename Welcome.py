@@ -19,6 +19,7 @@ st.write("# Welcome to the Cat Input Application! 👋")
 
 st.markdown('This application aims to a simple and efficient way to help you handling CAT data by giving you 2 options :')
 st.markdown('- An **Excel Template** depends on your criteria (Type, Peril, Currency)')
-st.markdown('- A **vizualisation** of your data with some graphs and tables')
+st.markdown('- A **Vizualisation** of your data with graphs and tables (Account and Location)')
+st.markdown('- An ability to  **Download the tables** ')
 st.markdown('**REMINDER : The Cat Input Application is still in Proof of Concept, any feedback will be more than welcomed to improve the App !** ')
     
