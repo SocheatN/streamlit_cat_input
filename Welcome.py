@@ -3,7 +3,7 @@ import streamlit as st
 pages = st.source_util.get_pages('Welcome.py')
 new_page_names = {
   'Template': '📄 Template',
-  'Visualization': '📊 Visualization',
+  'Generate Input': '📊 Generate Input',
 }
 
 for key, page in pages.items():
