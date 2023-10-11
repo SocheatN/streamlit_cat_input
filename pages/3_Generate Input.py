@@ -7,6 +7,7 @@ import base64
 from io import StringIO, BytesIO
 import io
 from pathlib import Path
+import os
 
 
 st.set_page_config(page_title="Generate_Input", page_icon=":egg:", layout="wide")
