@@ -410,7 +410,21 @@ if uploaded_file:
             
             # -- DOWNLOAD SECTION
             st.subheader('Downloads:')
-            generate_download_button('Download the RMS Tables as CSV', edited_df_Account, edited_df_Location)
+            #generate_download_button('Download the RMS Tables as CSV', edited_df_Account, edited_df_Location)
+            st.download_button(
+                 label="Download Account as CSV",
+                 data=edited_df_Account.to_csv(),
+                 file_name='Account.csv',
+                 mime='text/csv',
+             )
+            
+            st.download_button(
+                 label="Download Location as CSV",
+                 data=edited_df_Location.to_csv(),
+                 file_name='Location.csv',
+                 mime='text/csv',
+             )
+        
                                 
         if selection2_option_1 and not selection2_option_2:  # Only EQ selected
 
@@ -454,7 +468,20 @@ if uploaded_file:
             
             # -- DOWNLOAD SECTION
             st.subheader('Downloads:')
-            generate_download_button('Download the RMS tables as CSV', edited_df_Account, edited_df_Location)
+            #generate_download_button('Download the RMS tables as CSV', edited_df_Account, edited_df_Location)
+            st.download_button(
+                 label="Download Account as CSV",
+                 data=edited_df_Account.to_csv(),
+                 file_name='Account.csv',
+                 mime='text/csv',
+             )
+            
+            st.download_button(
+                 label="Download Location as CSV",
+                 data=edited_df_Location.to_csv(),
+                 file_name='Location.csv',
+                 mime='text/csv',
+             )
             
         if selection2_option_2 and not selection2_option_1:  # Only TC selected
 
@@ -490,7 +517,20 @@ if uploaded_file:
             
             # -- DOWNLOAD SECTION
             st.subheader('Downloads:')
-            generate_download_button('Download the RMS tables as CSV', edited_df_Account, edited_df_Location)
+            #generate_download_button('Download the RMS tables as CSV', edited_df_Account, edited_df_Location)
+            st.download_button(
+                 label="Download Account as CSV",
+                 data=edited_df_Account.to_csv(),
+                 file_name='Account.csv',
+                 mime='text/csv',
+             )
+            
+            st.download_button(
+                 label="Download Location as CSV",
+                 data=edited_df_Location.to_csv(),
+                 file_name='Location.csv',
+                 mime='text/csv',
+             )
         
     if selection1 == 'AIR':
         hide_dataframe_row_index = """
