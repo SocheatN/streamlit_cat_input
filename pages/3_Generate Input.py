@@ -16,7 +16,7 @@ st.set_page_config(page_title="Generate_Input", page_icon=":egg:", layout="wide"
 def convert_into_csv(df, file_name):
     downloads_path = str(Path.home()/"Downloads")
     Path(downloads_path + "/Cat Output Files").mkdir(parents=True, exist_ok=True)
-    df.to_csv(downloads_path+'//'+file_name+'.csv', index = False)
+    df.to_csv('/Cat Output Files/'+file_name+'.csv', index = False)
 
 
 def generate_download_button(button_label, df_Account, df_Location):
