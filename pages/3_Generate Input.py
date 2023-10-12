@@ -15,6 +15,7 @@ st.set_page_config(page_title="Generate_Input", page_icon=":egg:", layout="wide"
 # ---- DEF ----
 def convert_into_csv(df, file_name):
     downloads_path = str(Path.home()/"Downloads")
+    downloads_path.mkdir(parents=True, exist_ok=True)
     df.to_csv(downloads_path+'//'+file_name+'.csv', index = False)
 
 
