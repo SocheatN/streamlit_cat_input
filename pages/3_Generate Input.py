@@ -14,7 +14,7 @@ st.set_page_config(page_title="Generate_Input", page_icon=":egg:", layout="wide"
 
 # ---- DEF ----
 def convert_into_csv(df, file_name):
-    df.to_csv(file_name+'.csv', index = False)
+    return df.to_csv(file_name+'.csv', index = False)
 
 def generate_download_button(button_label, df_Account, df_Location):
             if st.button(button_label):
