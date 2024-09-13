@@ -54,7 +54,7 @@ def loc_file_AIR(Exp,peril,df_Occ,df_Cons,df_BH, currency):
 
 def check_split(df, label):
     df_check = df.groupby('LOBNAME').sum()
-    #df_check = df_check.round(5)
+    df_check = df_check.round(5)
     Check = (df_check[label] == 1).all()
     if Check != True:
        st.warning('WARNING: Sum of ' + label + ' is not equal to 1 for each LOBNAME', icon="⚠️")
