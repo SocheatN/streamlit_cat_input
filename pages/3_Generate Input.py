@@ -33,7 +33,11 @@ def loc_file_RMS(Exp,peril,df_Occ,df_Cons,df_BH, currency):
     df[peril+'CV3VAL']=df['BI']*df['Occ_split']*df['Cons_split']*df['BH_split']*df['YB_split']
     df['NUMBLDGS']=np.ceil(df['NUMBLDGS']*df['Occ_split']*df['Cons_split']*df['BH_split']*df['YB_split'])
     df[peril+'SITELIM']=df['SITELIM']*df['Occ_split']*df['Cons_split']*df['BH_split']*df['YB_split']
-    df=df[df[peril+'CV1VAL']+df[peril+'CV2VAL']+df[peril+'CV3VAL']>0]
+    
+    df[peril+'CV1VAL'] = df[peril+'CV1VAL'].fillna(0)
+    df[peril+'CV2VAL'] = df[peril+'CV2VAL'].fillna(0)
+    df[peril+'CV3VAL'] = df[peril+'CV3VAL'].fillna(0)
+    df=df[(df[peril+'CV1VAL'] + df[peril+'CV2VAL'] + df[peril+'CV3VAL']) > 0]
     
     df['ACCNTNUM'],df['CNTRYCODE'],df['CNTRYSCHEME'],df['EQCV1VCUR'],df['EQCV2VCUR'],df['EQCV3VCUR'], df['EQSITELCUR'],df['WSCV1VCUR'],df['WSCV2VCUR'],df['WSCV3VCUR'],df['WSSITELCUR']= df['LOBNAME']+'_'+peril,'CN','ISO2A', currency, currency, currency, currency, currency, currency, currency, currency
     
@@ -45,7 +49,10 @@ def loc_file_AIR(Exp,peril,df_Occ,df_Cons,df_BH, currency):
     df['EQCV1VAL'],df['EQCV2VAL'],df['EQSITELIM'], df['WSCV1VAL'],df['WSCV2VAL'],df['WSSITELIM']=0,0,0,0,0,0
     df[peril+'CV1VAL']=df['BuildingValue']*df['Occ_split']*df['Cons_split']*df['BH_split']*df['YB_split']
     df[peril+'CV2VAL']=df['ContentsValue']*df['Occ_split']*df['Cons_split']*df['BH_split']*df['YB_split']
-    df=df[df[peril+'CV1VAL']+df[peril+'CV2VAL']>0]
+    
+    df[peril+'CV1VAL'] = df[peril+'CV1VAL'].fillna(0)
+    df[peril+'CV2VAL'] = df[peril+'CV2VAL'].fillna(0)
+    df=df[(df[peril+'CV1VAL'] + df[peril+'CV2VAL']) > 0]
     
     df['ContractID'], df['CNTRYCODE'], df['CNTRYSCHEME'], df['EQCV1VCUR'], df['EQCV2VCUR'], df['EQSITELCUR'], df['WSCV1VCUR'], df['WSCV2VCUR'], df['WSSITELCUR']= df['ContractID'], 'CN', 'ISO2A', currency, currency, currency, currency, currency, currency
     df = df.loc[:,~df.columns.duplicated()].copy()
