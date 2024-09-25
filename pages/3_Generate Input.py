@@ -27,7 +27,7 @@ def generate_download_button(button_label, df_Account, df_Location):
 @st.cache_data(show_spinner=False)
 def loc_file_RMS(Exp,peril,df_Occ,df_Cons,df_BH, currency):
     df=Exp.merge(df_Occ,on='LOBNAME').merge(df_Cons,on='LOBNAME').merge(df_BH,on='LOBNAME').merge(df_YB,on='LOBNAME') 
-    df['EQCV1VAL'],df['EQCV2VAL'],df['EQCV3VAL'],df['EQSITELIM'], df['WSCV1VAL'],df['WSCV2VAL'],df['WSCV3VAL'],df['WSSITELIM']=0,0,0,0,0,0,0,0
+    df['EQCV1VAL'],df['EQCV2VAL'],df['EQCV3VAL'],df['EQSITELIM'], df['TCCV1VAL'],df['TCCV2VAL'],df['TCCV3VAL'],df['TCSITELIM']=0,0,0,0,0,0,0,0
     df[peril+'CV1VAL']=df['BLDG']*df['Occ_split']*df['Cons_split']*df['BH_split']*df['YB_split']
     df[peril+'CV2VAL']=df['CONT']*df['Occ_split']*df['Cons_split']*df['BH_split']*df['YB_split']
     df[peril+'CV3VAL']=df['BI']*df['Occ_split']*df['Cons_split']*df['BH_split']*df['YB_split']
@@ -39,14 +39,14 @@ def loc_file_RMS(Exp,peril,df_Occ,df_Cons,df_BH, currency):
     df[peril+'CV3VAL'] = df[peril+'CV3VAL'].fillna(0)
     df=df[(df[peril+'CV1VAL'] + df[peril+'CV2VAL'] + df[peril+'CV3VAL']) > 0]
     
-    df['ACCNTNUM'],df['CNTRYCODE'],df['CNTRYSCHEME'],df['EQCV1VCUR'],df['EQCV2VCUR'],df['EQCV3VCUR'], df['EQSITELCUR'],df['WSCV1VCUR'],df['WSCV2VCUR'],df['WSCV3VCUR'],df['WSSITELCUR']= df['LOBNAME']+'_'+peril,'CN','ISO2A', currency, currency, currency, currency, currency, currency, currency, currency
+    df['ACCNTNUM'],df['CNTRYCODE'],df['CNTRYSCHEME'],df['EQCV1VCUR'],df['EQCV2VCUR'],df['EQCV3VCUR'], df['EQSITELCUR'],df['TCCV1VCUR'],df['TCCV2VCUR'],df['TCCV3VCUR'],df['TCSITELCUR']= df['LOBNAME']+'_'+peril,'CN','ISO2A', currency, currency, currency, currency, currency, currency, currency, currency
     
     loc_file=df.drop(columns = ['BLDG','CONT','BI','TIV','SITELIM','Occupancy','Occ_split','Construction','Cons_split','BH','BH_split','YB','YB_split'])
     return loc_file
 @st.cache_data(show_spinner=False)
 def loc_file_AIR(Exp,peril,df_Occ,df_Cons,df_BH, currency):
     df=Exp.merge(df_Occ,on='ContractID').merge(df_Cons,on='ContractID').merge(df_BH,on='ContractID').merge(df_YB,on='ContractID') 
-    df['EQCV1VAL'],df['EQCV2VAL'],df['EQSITELIM'], df['WSCV1VAL'],df['WSCV2VAL'],df['WSSITELIM']=0,0,0,0,0,0
+    df['EQCV1VAL'],df['EQCV2VAL'],df['EQSITELIM'], df['TCCV1VAL'],df['TCCV2VAL'],df['TCSITELIM']=0,0,0,0,0,0
     df[peril+'CV1VAL']=df['BuildingValue']*df['Occ_split']*df['Cons_split']*df['BH_split']*df['YB_split']
     df[peril+'CV2VAL']=df['ContentsValue']*df['Occ_split']*df['Cons_split']*df['BH_split']*df['YB_split']
     
@@ -54,7 +54,7 @@ def loc_file_AIR(Exp,peril,df_Occ,df_Cons,df_BH, currency):
     df[peril+'CV2VAL'] = df[peril+'CV2VAL'].fillna(0)
     df=df[(df[peril+'CV1VAL'] + df[peril+'CV2VAL']) > 0]
     
-    df['ContractID'], df['CNTRYCODE'], df['CNTRYSCHEME'], df['EQCV1VCUR'], df['EQCV2VCUR'], df['EQSITELCUR'], df['WSCV1VCUR'], df['WSCV2VCUR'], df['WSSITELCUR']= df['ContractID'], 'CN', 'ISO2A', currency, currency, currency, currency, currency, currency
+    df['ContractID'], df['CNTRYCODE'], df['CNTRYSCHEME'], df['EQCV1VCUR'], df['EQCV2VCUR'], df['EQSITELCUR'], df['TCCV1VCUR'], df['TCCV2VCUR'], df['TCSITELCUR']= df['ContractID'], 'CN', 'ISO2A', currency, currency, currency, currency, currency, currency
     df = df.loc[:,~df.columns.duplicated()].copy()
     loc_file=df.drop(columns = ['BuildingValue','ContentsValue','Occupancy','Occ_split','Cons_split','BH_split','YB_split'])
     return loc_file
@@ -396,7 +396,7 @@ if uploaded_file:
             
             ## -- DATA VALIDATION
             EQ_loc_file=loc_file_RMS(df_EQ,'EQ',df_Occ,df_Cons,df_BH, cur)
-            TC_loc_file=loc_file_RMS(df_TC,'WS',df_Occ,df_Cons,df_BH, cur)
+            TC_loc_file=loc_file_RMS(df_TC,'TC',df_Occ,df_Cons,df_BH, cur)
             
             check_TIV(df_EQ, EQ_loc_file, 'BLDG', 'EQCV1VAL')
             check_TIV(df_EQ, EQ_loc_file, 'CONT', 'EQCV2VAL')
@@ -510,7 +510,7 @@ if uploaded_file:
 
             # -- TABLES FOR ACCOUNT/LOCATION  
             
-            TC_loc_file=loc_file_RMS(df_TC,'WS',df_Occ,df_Cons,df_BH, cur)
+            TC_loc_file=loc_file_RMS(df_TC,'TC',df_Occ,df_Cons,df_BH, cur)
             df_Location=TC_loc_file
             df_Location['LOCNUM']=df_Location.reset_index().index+1
                             
@@ -641,7 +641,7 @@ if uploaded_file:
             cur = currency
             
         EQ_loc_file=loc_file_AIR(df_EQ,'EQ',df_Occ,df_Cons,df_BH, cur)
-        TC_loc_file=loc_file_AIR(df_TC,'WS',df_Occ,df_Cons,df_BH, cur)
+        TC_loc_file=loc_file_AIR(df_TC,'TC',df_Occ,df_Cons,df_BH, cur)
                 
             
         if selection2_option_1 and selection2_option_2:  # EQ and TC selected
