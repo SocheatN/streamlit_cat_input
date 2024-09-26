@@ -39,7 +39,7 @@ def loc_file_RMS(Exp,peril,df_Occ,df_Cons,df_BH, currency):
     df[peril+'CV3VAL'] = df[peril+'CV3VAL'].fillna(0)
     df=df[(df[peril+'CV1VAL'] + df[peril+'CV2VAL'] + df[peril+'CV3VAL']) > 0]
     
-    df['ACCNTNUM'],df['CNTRYCODE'],df['CNTRYSCHEME'],df['EQCV1VCUR'],df['EQCV2VCUR'],df['EQCV3VCUR'], df['EQSITELCUR'],df['TCCV1VCUR'],df['TCCV2VCUR'],df['TCCV3VCUR'],df['TCSITELCUR']= df['LOBNAME']+'_'+peril,'CN','ISO2A', currency, currency, currency, currency, currency, currency, currency, currency
+    df['ACCNTNUM'],df['CNTRYCODE'],df['CNTRYSCHEME'],df['EQCV1VCUR'],df['EQCV2VCUR'],df['EQCV3VCUR'], df['EQSITELCUR'],df['TCCV1VCUR'],df['TCCV2VCUR'],df['TCCV3VCUR'],df['TCSITELCUR']= df['ACCNTNUM'],'CN','ISO2A', currency, currency, currency, currency, currency, currency, currency, currency
     
     loc_file=df.drop(columns = ['BLDG','CONT','BI','TIV','SITELIM','Occupancy','Occ_split','Construction','Cons_split','BH','BH_split','YB','YB_split'])
     return loc_file
